@@ -1,2 +1,10 @@
 
 src/
+
+linux-*.sign
+
+linux-*.xz
+
+linux-v*.zst
+
+linux-v*.sig
