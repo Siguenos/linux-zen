@@ -1,6 +1,6 @@
 # Maintainer: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
 
-pkgbase=linux-zen
+pkgbase=linux-zen-alex
 pkgver=6.6.2.zen1
 pkgrel=1
 pkgdesc='Linux ZEN'
@@ -60,19 +60,25 @@ prepare() {
   echo "-$pkgrel" > localversion.10-pkgrel
   echo "${pkgbase#linux}" > localversion.20-pkgname
 
-  local src
-  for src in "${source[@]}"; do
-    src="${src%%::*}"
-    src="${src##*/}"
-    src="${src%.zst}"
-    [[ $src = *.patch ]] || continue
-    echo "Applying patch $src..."
-    patch -Np1 < "../$src"
-  done
+  if [ ! -f "../../.patched" ]; then
+
+    local src
+    for src in "${source[@]}"; do
+      src="${src%%::*}"
+      src="${src##*/}"
+      src="${src%.zst}"
+      [[ $src = *.patch ]] || continue
+      echo "Applying patch $src..."
+      patch -Np1 < "../$src"
+    done
+
+    touch .patched
+  fi
 
   echo "Setting config..."
   cp ../config .config
-  make olddefconfig
+  make xconfig
+#  make olddefconfig
   diff -u ../config .config || :
 
   make -s kernelrelease > version
@@ -82,7 +88,7 @@ prepare() {
 build() {
   cd $_srcname
   make all
-  make htmldocs
+#  make htmldocs
 }
 
 _package() {
@@ -229,7 +235,7 @@ _package-docs() {
 pkgname=(
   "$pkgbase"
   "$pkgbase-headers"
-  "$pkgbase-docs"
+#  "$pkgbase-docs"
 )
 for _p in "${pkgname[@]}"; do
   eval "package_$_p() {
