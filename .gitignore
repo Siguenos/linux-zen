@@ -8,3 +8,5 @@ linux-*.xz
 linux-v*.zst
 
 linux-v*.sig
+
+pkg/
